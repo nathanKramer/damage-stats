@@ -11,6 +11,7 @@ function OnModInit()
 end
 
 function OnModPostInit()
+    GamePrint("Initialized Mod: Damage Stats")
     print("Mod - OnModPostInit()") -- Then this is called for all mods
 end
 
@@ -35,14 +36,21 @@ end
 dofile("mods/damage_stats/files/utils.lua")
 dofile("mods/damage_stats/files/listeners/damage_received.lua")
 function OnPlayerSpawned(player)
-    GamePrint("[Damage Stats] Listening for damage...")
-
-    component_id = EntityAddComponent(player, "LuaComponent", {
+    local component_id = EntityAddComponent(player, "LuaComponent", {
         script_damage_received = "mods/damage_stats/files/listeners/damage_received.lua",
         remove_after_executed = "0",
         execute_every_n_frame = "5"
     })
     EntitySetComponentIsEnabled(player, component_id, true)
+
+    -- local damageModels = EntityGetComponent(player, "DamageModelComponent")
+
+    -- for _, damageModel in pairs(damageModels) do
+    --     local damageTypes = ComponentObjectGetMembers(damageModel, "damage_multipliers")
+    --     for a, b in pairs(damageTypes) do
+    --         print("Damage Type: " .. tostring(a) .. ", " .. tostring(b))
+    --     end
+    -- end
 end
 
 gui = nil
@@ -50,15 +58,6 @@ function OnWorldPostUpdate()
     local shouldDisplay = ModSettingGet("damage_stats.display_damage_report")
     if not shouldDisplay or shouldDisplay == "false" then
         return
-    end
-
-    local function formatDamage(dmg)
-        local formatted = math.floor(tonumber(dmg) * 25)
-        if formatted == 0 then formatted = 1 end
-        if formatted > 1000 then
-            formatted = string.format("%.2f", (formatted / 1000.0)) .. "K"
-        end
-        return formatted
     end
 
     gui = gui or GuiCreate();
@@ -77,29 +76,50 @@ function OnWorldPostUpdate()
         local padding = 15
         GuiText(gui, screen_width - (w + padding), h, "Damage Report")
 
-        -- Make sure the w & padding values are viable for all the currently displaying damage types
+        local totalDamage = 0
+        local damageTypes = {}
+        local damageTypesWithDamage = {}
+
+        -- First we do a pass over all of the damage types to sort them, and to check for the longest strings we need to display
         for idx, component in pairs(damageStats) do
             local damageType = ComponentGetValue2(component, "name")
-            local damage = formatDamage(ComponentGetValue2(component, "value_float"))
+            local damage = ComponentGetValue2(component, "value_float")
 
             local labelDimensions = GuiGetTextDimensions(gui, damageType .. ":")
-            local valueDimensions = GuiGetTextDimensions(gui, tostring(damage))
+            local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
             local valueWidth = labelDimensions + valueDimensions + (padding / 2)
             if valueWidth > w then
                 w = valueWidth
             end
+
+            totalDamage = totalDamage + damage
+            table.insert(damageTypes, damageType)
+            damageTypesWithDamage[damageType] = damage 
         end
 
-        for idx, component in pairs(damageStats) do
-            local damageType = ComponentGetValue2(component, "name")
-            local damage = formatDamage(ComponentGetValue2(component, "value_float"))
-            local valueDimensions = GuiGetTextDimensions(gui, damage)
+        local function compareDamage(a, b)
+            return damageTypesWithDamage[a] > damageTypesWithDamage[b]
+        end
+
+        table.sort(damageTypes, compareDamage)
+
+        count = 0
+        for idx, damageType in pairs(damageTypes) do
+            local damage = damageTypesWithDamage[damageType]
+            local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
             GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
             GuiText(gui, screen_width - (w + padding), h + (10 * idx), damageType .. ":")
             GuiColorSetForNextWidget( gui, 0.7, 0.7, 0.7, 0.7 )
-            GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * idx), tostring(damage))
+            GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * idx), FormatDamage(damage))
             idx = idx + 1
+            count = idx
         end
+
+        local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(totalDamage))
+        GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
+        GuiText(gui, screen_width - (w + padding), h + (10 * count), "Total:")
+        GuiColorSetForNextWidget( gui, 0.7, 0.7, 0.7, 0.7 )
+        GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * count), FormatDamage(totalDamage))
     end
 end
 

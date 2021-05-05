@@ -5,6 +5,9 @@ function damage_received( damage, message, _entity_thats_responsible, _is_fatal,
     damageType = string.gsub(damageType, "damage from material: ", "")
 
     local player = GetPlayer()
+    local damageModel = EntityGetFirstComponentIncludingDisabled(player, "DamageModelComponent")
+    local damageMultiplier = ComponentObjectGetValue2(damageModel, "damage_multipliers", damageType) or 1.0
+
     local currentDamage = 0
     local currentDamageComponents = EntityGetComponent(player, "VariableStorageComponent", "damage_stats")
 
@@ -19,7 +22,20 @@ function damage_received( damage, message, _entity_thats_responsible, _is_fatal,
         end
     end
 
-    local totalDamage = currentDamage + damage
+    -- local damageTaken = (damage * damageMultiplier)
+    -- For some reason this is not working out. (based on my observation of explosion damage in the mines)
+    local damageTaken = damage
+    local blocked = damage - damageTaken
+    local totalDamage = currentDamage + damageTaken
+
+    local nonDOTDamage = (damageTaken * 25.0) > 1.0
+    if ModSettingGet("damage_stats.print_damage_messages") and nonDOTDamage then
+        local message = "Took " .. FormatDamage(damageTaken) .. " " .. damageType .. " damage"
+        if blocked > 0.0 then
+            message = message .. ", blocked " .. FormatDamage(blocked)
+        end
+        GamePrint(message .. ".")
+    end
 
     if existingComponent then
         ComponentSetValue2(existingComponent, "value_float", totalDamage)
