@@ -1,12 +1,20 @@
 dofile("mods/damage_stats/files/utils.lua")
 
+lastHp = nil
 function damage_received( damage, message, _entity_thats_responsible, _is_fatal, _projectile_thats_responsible )
     local damageType = string.gsub(message, "$damage_", "")
     damageType = string.gsub(damageType, "damage from material: ", "")
 
     local player = GetPlayer()
     local damageModel = EntityGetFirstComponentIncludingDisabled(player, "DamageModelComponent")
-    local damageMultiplier = ComponentObjectGetValue2(damageModel, "damage_multipliers", damageType) or 1.0
+    local currentHp = ComponentGetValue2(damageModel, "hp")
+
+    if currentHp == lastHp then
+        return
+    end
+    lastHp = currentHp
+
+    -- local damageMultiplier = ComponentObjectGetValue2(damageModel, "damage_multipliers", damageType) or 1.0
 
     local currentDamage = 0
     local currentDamageComponents = EntityGetComponent(player, "VariableStorageComponent", "damage_stats")
@@ -22,18 +30,16 @@ function damage_received( damage, message, _entity_thats_responsible, _is_fatal,
         end
     end
 
-    -- local damageTaken = (damage * damageMultiplier)
-    -- For some reason this is not working out. (based on my observation of explosion damage in the mines)
-    local damageTaken = damage
-    local blocked = damage - damageTaken
     local totalDamage = currentDamage + damageTaken
-
-    local nonDOTDamage = (damageTaken * 25.0) > 1.0
+    local nonDOTDamage = math.abs(ScaleDamage(damageTaken)) > 1.0
     if ModSettingGet("damage_stats.print_damage_messages") and nonDOTDamage then
-        local message = "Took " .. FormatDamage(damageTaken) .. " " .. damageType .. " damage"
-        if blocked > 0.0 then
-            message = message .. ", blocked " .. FormatDamage(blocked)
+        local firstWord = "Took "
+        local damageStr = " damage"
+        if damageTaken < 0.0 then
+            firstWord = "Healed "
+            damageStr = " health"
         end
+        local message = firstWord .. FormatDamage(damageTaken) .. " " .. damageType .. damageStr
         GamePrint(message .. ".")
     end
 

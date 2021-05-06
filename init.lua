@@ -64,14 +64,15 @@ function OnWorldPostUpdate()
     GuiStartFrame( gui );
     local screen_width, screen_height = GuiGetScreenDimensions(gui)
 
-    GuiIdPushString( gui, "damage_stats")
 
     local player = GetPlayer()
     local damageStats = EntityGetComponent(player, "VariableStorageComponent", "damage_stats")
 
+    local displayLimit = tonumber(ModSettingGet("damage_stats.display_limit") or 10)
+
     if damageStats ~= nil then
         GuiColorSetForNextWidget( gui, 0.8, 0.8, 0.8, 0.8 )
-        local h = 200
+        local h = 180
         local w = GuiGetTextDimensions(gui, "Damage Report")
         local padding = 15
         GuiText(gui, screen_width - (w + padding), h, "Damage Report")
@@ -92,34 +93,41 @@ function OnWorldPostUpdate()
                 w = valueWidth
             end
 
-            totalDamage = totalDamage + damage
+            if damage > 0.0 then
+                totalDamage = totalDamage + damage
+            end
             table.insert(damageTypes, damageType)
             damageTypesWithDamage[damageType] = damage 
         end
 
         local function compareDamage(a, b)
-            return damageTypesWithDamage[a] > damageTypesWithDamage[b]
+            return math.abs(damageTypesWithDamage[a]) > math.abs(damageTypesWithDamage[b])
         end
 
         table.sort(damageTypes, compareDamage)
 
-        count = 0
+        local count = 0
         for idx, damageType in pairs(damageTypes) do
+            if idx > displayLimit then
+                break
+            end
+
             local damage = damageTypesWithDamage[damageType]
             local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
             GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
             GuiText(gui, screen_width - (w + padding), h + (10 * idx), damageType .. ":")
             GuiColorSetForNextWidget( gui, 0.7, 0.7, 0.7, 0.7 )
             GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * idx), FormatDamage(damage))
-            idx = idx + 1
-            count = idx
+
+            count = count + 1
         end
 
+        
         local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(totalDamage))
         GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
-        GuiText(gui, screen_width - (w + padding), h + (10 * count), "Total:")
+        GuiText(gui, screen_width - (w + padding), h + (10 * (count+1)), "Total:")
         GuiColorSetForNextWidget( gui, 0.7, 0.7, 0.7, 0.7 )
-        GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * count), FormatDamage(totalDamage))
+        GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * (count+1)), FormatDamage(totalDamage))
     end
 end
 
@@ -130,10 +138,10 @@ end
 
 
 -- This code runs when all mods' filesystems are registered
-ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/example/files/actions.lua" ) -- Basically dofile("mods/example/files/actions.lua") will appear at the end of gun_actions.lua
-ModMagicNumbersFileAdd( "mods/example/files/magic_numbers.xml" ) -- Will override some magic numbers using the specified file
-ModRegisterAudioEventMappings( "mods/example/files/audio_events.txt" ) -- Use this to register custom fmod events. Event mapping files can be generated via File -> Export GUIDs in FMOD Studio.
-ModMaterialsFileAdd( "mods/example/files/materials_rainbow.xml" ) -- Adds a new 'rainbow' material to materials
-ModLuaFileAppend( "data/scripts/items/potion.lua", "mods/example/files/potion_appends.lua" )
+-- ModLuaFileAppend( "data/scripts/gun/gun_actions.lua", "mods/example/files/actions.lua" ) -- Basically dofile("mods/example/files/actions.lua") will appear at the end of gun_actions.lua
+-- ModMagicNumbersFileAdd( "mods/example/files/magic_numbers.xml" ) -- Will override some magic numbers using the specified file
+-- ModRegisterAudioEventMappings( "mods/example/files/audio_events.txt" ) -- Use this to register custom fmod events. Event mapping files can be generated via File -> Export GUIDs in FMOD Studio.
+-- ModMaterialsFileAdd( "mods/example/files/materials_rainbow.xml" ) -- Adds a new 'rainbow' material to materials
+-- ModLuaFileAppend( "data/scripts/items/potion.lua", "mods/example/files/potion_appends.lua" )
 
 --print("Example mod init done")

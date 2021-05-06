@@ -47,26 +47,11 @@ mod_settings = {
         ui_fn = mod_setting_bool_custom	
     },
     {
-        category_id = "not_yet_implemented",
-        ui_name = "Not Yet Implemented:",
-        ui_description = "These may be implemented in the future",
-        settings = {
-            {
-                id = "display_limit",
-                ui_name = "Display Limit",
-                ui_description = "The maximum number of damage types to display",
-                value_default = "10",
-                scope = MOD_SETTING_SCOPE_RUNTIME
-            },
-            {
-                id = "clear_on_full_hp",
-                ui_name = "Clear Report on Full HP",
-                ui_description = "Clears the report when your health is restored",
-                value_default = false,
-                scope = MOD_SETTING_SCOPE_RUNTIME,
-                ui_fn = mod_setting_bool_custom	
-            },
-        }
+        id = "display_limit",
+        ui_name = "Display Limit",
+        ui_description = "The maximum number of damage types to display",
+        value_default = "10",
+        scope = MOD_SETTING_SCOPE_RUNTIME
     }
 }
 -- mod_settings = 
