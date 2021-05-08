@@ -53,7 +53,20 @@ function OnPlayerSpawned(player)
     -- end
 end
 
+damageGroupings = {
+    ["$damage_radioactive"] = "toxic",
+    ["mat: cursed rock"] = "curse",
+    ["$damage_rock_curse"] = "curse",
+    ["$damage_holy_mountains_curse"] = "curse",
+    ["$ethereal_damage"] = "ethereal",
+    ["mat: toxic rock"] = "toxic",
+    ["mat: poison"] = "poison",
+    ["mat: freezing vapour"] = "ice",
+    ["mat: freezing liquid"] = "ice"
+}
+
 gui = nil
+groupSimilarDamageTypes = true -- todo, make this a setting
 function OnWorldPostUpdate()
     local shouldDisplay = ModSettingGet("damage_stats.display_damage_report")
     if not shouldDisplay or shouldDisplay == "false" then
@@ -78,15 +91,23 @@ function OnWorldPostUpdate()
         GuiText(gui, screen_width - (w + padding), h, "Damage Report")
 
         local totalDamage = 0
-        local damageTypes = {}
         local damageTypesWithDamage = {}
 
         -- First we do a pass over all of the damage types to sort them, and to check for the longest strings we need to display
         for idx, component in pairs(damageStats) do
-            local damageType = ComponentGetValue2(component, "name")
+            local rawDamageType = ComponentGetValue2(component, "name")
             local damage = ComponentGetValue2(component, "value_float")
 
-            local labelDimensions = GuiGetTextDimensions(gui, damageType .. ":")
+            local parsedDamageType = string.gsub(
+                string.gsub(rawDamageType, "$damage_", ""),
+                "mat: ", ""
+            )
+            local grouping = parsedDamageType
+            if groupSimilarDamageTypes then
+                grouping = damageGroupings[rawDamageType] or parsedDamageType
+            end
+
+            local labelDimensions = GuiGetTextDimensions(gui, grouping .. ":")
             local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
             local valueWidth = labelDimensions + valueDimensions + (padding / 2)
             if valueWidth > w then
@@ -96,26 +117,31 @@ function OnWorldPostUpdate()
             if damage > 0.0 then
                 totalDamage = totalDamage + damage
             end
-            table.insert(damageTypes, damageType)
-            damageTypesWithDamage[damageType] = damage 
+
+            damageTypesWithDamage[grouping] = (damageTypesWithDamage[grouping] or 0) + damage 
         end
 
         local function compareDamage(a, b)
             return math.abs(damageTypesWithDamage[a]) > math.abs(damageTypesWithDamage[b])
         end
 
-        table.sort(damageTypes, compareDamage)
+        local damageKeys = {}
+        for k, _ in pairs(damageTypesWithDamage) do table.insert(damageKeys, k) end
+        table.sort(damageKeys, compareDamage)
 
         local count = 0
-        for idx, damageType in pairs(damageTypes) do
+        for idx, damageKey in pairs(damageKeys) do
             if idx > displayLimit then
                 break
             end
 
-            local damage = damageTypesWithDamage[damageType]
+            local damage = damageTypesWithDamage[damageKey]
             local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
+
             GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
-            GuiText(gui, screen_width - (w + padding), h + (10 * idx), damageType .. ":")
+
+            local keyStr = damageKey .. ":"
+            GuiText(gui, screen_width - (w + padding), h + (10 * idx), keyStr)
             GuiColorSetForNextWidget( gui, 0.7, 0.7, 0.7, 0.7 )
             GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * idx), FormatDamage(damage))
 

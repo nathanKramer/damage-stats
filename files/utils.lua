@@ -6,12 +6,13 @@ function GetPlayer()
 end
 
 function FormatDamage(dmg)
-    local scaled = ScaleDamage(dmg)
-    local rounded = math.floor(scaled + 0.5)
-    if rounded > 1000.0 then
-        rounded = string.format("%.2f", (rounded / 1000.0)) .. "K"
+    local formatted = ScaleDamage(dmg)
+    if math.abs(formatted) > 1000.0 then
+        formatted = string.format("%.2f", (formatted / 1000.0)) .. "K"
+    else
+        formatted = string.format("%.1f", formatted)
     end
-    return tostring(rounded)
+    return tostring(formatted)
 end
 
 function ScaleDamage(dmg)

@@ -2,8 +2,8 @@ dofile("mods/damage_stats/files/utils.lua")
 
 lastHp = nil
 function damage_received( damage, message, _entity_thats_responsible, _is_fatal, _projectile_thats_responsible )
-    local damageType = string.gsub(message, "$damage_", "")
-    damageType = string.gsub(damageType, "damage from material: ", "")
+    local damageType = string.lower(message)
+    damageType = string.gsub(damageType, "damage from material: ", "mat: ")
 
     local player = GetPlayer()
     local damageModel = EntityGetFirstComponentIncludingDisabled(player, "DamageModelComponent")
@@ -30,16 +30,17 @@ function damage_received( damage, message, _entity_thats_responsible, _is_fatal,
         end
     end
 
-    local totalDamage = currentDamage + damageTaken
-    local nonDOTDamage = math.abs(ScaleDamage(damageTaken)) > 1.0
+    local totalDamage = currentDamage + damage
+    local nonDOTDamage = math.abs(ScaleDamage(damage)) > 1.0
     if ModSettingGet("damage_stats.print_damage_messages") and nonDOTDamage then
         local firstWord = "Took "
         local damageStr = " damage"
-        if damageTaken < 0.0 then
-            firstWord = "Healed "
-            damageStr = " health"
+        local parsedDamageType = string.gsub(damageType, "$damage_", "")
+        if damage < 0.0 then
+            firstWord = "Received "
+            damageStr = " goodness"
         end
-        local message = firstWord .. FormatDamage(damageTaken) .. " " .. damageType .. damageStr
+        local message = firstWord .. FormatDamage(damage) .. " " .. parsedDamageType .. damageStr
         GamePrint(message .. ".")
     end
 
