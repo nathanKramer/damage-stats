@@ -41,16 +41,16 @@ mod_settings = {
     {
         id = "print_damage_messages",
         ui_name = "Print Damage Messages",
-        ui_description ="If On, will print damage messages as they occur. (Default: Off)",
-        value_default = false,
+        ui_description ="If On, will print damage messages as they occur. (Default: On)",
+        value_default = true,
         scope = MOD_SETTING_SCOPE_RUNTIME,
         ui_fn = mod_setting_bool_custom	
     },
     {
         id = "display_limit",
         ui_name = "Display Limit",
-        ui_description = "The maximum number of damage types to display",
-        value_default = "10",
+        ui_description = "The maximum number of damage sources to display.",
+        value_default = "20",
         scope = MOD_SETTING_SCOPE_RUNTIME
     }
 }

@@ -18,3 +18,7 @@ end
 function ScaleDamage(dmg)
     return tonumber(dmg) * 25.0
 end
+
+function InitialCase(str)
+    return (str:gsub("^%l", string.upper))
+end
