@@ -31,27 +31,83 @@ local mod_id = "damage_stats" -- This should match the name of your mod's folder
 mod_settings_version = 1 -- This is a magic global that can be used to migrate settings to new mod versions. call mod_settings_get_version() before mod_settings_update() to get the old value. 
 mod_settings = {
     {
-        id = "display_damage_report",
-        ui_name = "Display Damage Report",
-        ui_description = "If On, will display a damage report. (Default: On)",
-        value_default = true,
-        scope = MOD_SETTING_SCOPE_RUNTIME,
-        ui_fn = mod_setting_bool_custom	
+        category_id = "main_settings",
+        ui_name = "Damage Stats Settings",
+        settings = {
+            {
+                id = "display_damage_report",
+                ui_name = "Display Damage Report",
+                ui_description = "If On, will display a damage report. (Default: On)",
+                value_default = true,
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+                ui_fn = mod_setting_bool_custom,
+            },
+            {
+                id = "print_damage_messages",
+                ui_name = "Print Damage Messages",
+                ui_description ="If On, will print damage messages as they occur. (Default: On)",
+                value_default = true,
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+                ui_fn = mod_setting_bool_custom,
+            },
+            {
+                id = "display_limit",
+                ui_name = "Display Limit",
+                ui_description = "The maximum number of damage sources to display.",
+                value_default = "20",
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+            },
+        },
     },
     {
-        id = "print_damage_messages",
-        ui_name = "Print Damage Messages",
-        ui_description ="If On, will print damage messages as they occur. (Default: On)",
-        value_default = true,
-        scope = MOD_SETTING_SCOPE_RUNTIME,
-        ui_fn = mod_setting_bool_custom	
+        category_id = "positioning",
+        ui_name = "Position Settings",
+        ui_description = "These settings allow you to move the report",
+        settings = {
+            {
+                id = "positionFromTop",
+                ui_name = "Position from top",
+                ui_description = "The display position from the top of the screen. (Default: 180)",
+                value_default = "180",
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+            },
+            {
+                id = "positionFromRight",
+                ui_name = "Position from right",
+                ui_description = "The display position from the right of the screen. (Default: 20)",
+                value_default = "20",
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+            },
+        },
     },
     {
-        id = "display_limit",
-        ui_name = "Display Limit",
-        ui_description = "The maximum number of damage sources to display.",
-        value_default = "20",
-        scope = MOD_SETTING_SCOPE_RUNTIME
+        category_id = "compact_mode",
+        ui_name = "Compact Mode",
+        ui_description = "Compact Mode settings",
+        settings = {
+            {
+                id = "compact_display_mode",
+                ui_name = "Compact Display Mode",
+                ui_description = "Make the report more compact and display it by the health bar. (Default: Off)",
+                value_default = false,
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+                ui_fn = mod_setting_bool_custom,
+            },
+            {
+                id = "compactPositionFromTop",
+                ui_name = "Position from top",
+                ui_description = "The display position from the top of the screen (Default: 9)",
+                value_default = "9",
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+            },
+            {
+                id = "compactPositionFromRight",
+                ui_name = "Position from right",
+                ui_description = "The display position from the right of the screen (Default: 38)",
+                value_default = "38",
+                scope = MOD_SETTING_SCOPE_RUNTIME,
+            },
+        }
     }
 }
 -- mod_settings = 

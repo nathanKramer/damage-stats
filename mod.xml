@@ -1,6 +1,6 @@
 <Mod
-	name="Bard's Damage Stats"
-	description="Display damage stats per damage type"
+	name="Damage Stats"
+	description="Record and display damage stats per damage type"
 	request_no_api_restrictions="0" 
 > 
 </Mod>

@@ -1,7 +1,8 @@
 gui = nil
 -- Todo, make positioning a setting
-local fromTop = 180
-local fromRight = 24
+
+
+local compact = true
 
 function DisplayReport(damageReport)
     gui = gui or GuiCreate();
@@ -14,6 +15,11 @@ function DisplayReport(damageReport)
     local displayLimit = tonumber(
         ModSettingGet("damage_stats.display_limit") or 20
     )
+    local fromTop = tonumber(ModSettingGet("damage_stats.positionFromTop") or 180)
+    local fromRight = tonumber(ModSettingGet("damage_stats.positionFromRight") or 20)
+    local compactFromTop = tonumber(ModSettingGet("damage_stats.compactPositionFromTop") or 9)
+    local compactFromRight = tonumber(ModSettingGet("damage_stats.compactPositionFromRight") or 38)
+    local compact = ModSettingGet("damage_stats.compact_display_mode")
 
     local widestString = padding
 
@@ -23,23 +29,32 @@ function DisplayReport(damageReport)
     local totalDamage = damageReport.totalDamage
 
     if totalDamage == 0 then
-        local valueDimensions = GuiGetTextDimensions(gui, "Perfect Run")
-        GuiColorSetForNextWidget(gui, 0.5, 0.5, 0.5, 0.5)
-        local x, y = screen_width - (fromRight + valueDimensions), fromTop
-        GamePrint(tostring(gui) .. tostring(x) .. ", " .. tostring(y))
-        GuiText(gui, x, y, "Perfect Run")
 
-        local icon = "mods/damage_stats/files/icons/perfect.png"
-        local x, y = screen_width - (10 + fromRight), fromTop + 10
-        GuiImage( gui, iconId, x, y, icon, 0.7, 1, 1)
+        if compact then
+            local icon = "mods/damage_stats/files/icons/perfect.png"
+            local x, y = screen_width - (10 + compactFromRight), compactFromTop
+            GuiImage( gui, iconId, x, y, icon, 0.7, 1, 1)
+            GuiTooltip(gui, "Perfect Run", "")
+        else
+            local valueDimensions = GuiGetTextDimensions(gui, "Perfect Run")
+            GuiColorSetForNextWidget(gui, 0.5, 0.5, 0.5, 0.5)
+            local x, y = screen_width - (fromRight + valueDimensions), fromTop
+            GuiText(gui, x, y, "Perfect Run")
+
+            local icon = "mods/damage_stats/files/icons/perfect.png"
+            local x, y = screen_width - (10 + fromRight), fromTop + 10
+            GuiImage( gui, iconId, x, y, icon, 0.7, 1, 1)
+        end
 
         return
     end
 
     local titleDimensions = GuiGetTextDimensions(gui, "Damage Report")
     local titleX, titleY = screen_width - (fromRight + titleDimensions), fromTop
-    GuiColorSetForNextWidget(gui, 0.6, 0.6, 0.6, 0.6)
-    GuiText(gui, titleX, titleY, "Damage Report")
+    if not compact then
+        GuiColorSetForNextWidget(gui, 0.6, 0.6, 0.6, 0.6)
+        GuiText(gui, titleX, titleY, "Damage Report")
+    end
 
     -- Find widest string width
     for _key, damage in pairs(damageTypesWithDamage) do
@@ -62,27 +77,43 @@ function DisplayReport(damageReport)
             icon = "mods/damage_stats/files/icons/unknown.png"
         end
 
-        local x, y = screen_width - (widestString + fromRight),
+        if compact then                     
+            local x, y = screen_width - (compactFromRight + (10 * (idx + 1))), compactFromTop
+            GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
+            GuiTooltip(gui, InitialCase(damageKey), FormatDamage(damage))
+            iconId = iconId + 1
+        else
+            local x, y = screen_width - (widestString + fromRight),
                      fromTop + (10 * idx)
-        GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
-        GuiTooltip(gui, InitialCase(damageKey), "")
-        iconId = iconId + 1
-        GuiColorSetForNextWidget(gui, 0.7, 0.7, 0.7, 0.7)
-        GuiText(gui, screen_width - (fromRight + valueDimensions),
-                fromTop + (10 * idx), FormatDamage(damage))
+
+            GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
+            GuiTooltip(gui, InitialCase(damageKey), "")
+            iconId = iconId + 1
+            GuiColorSetForNextWidget(gui, 0.7, 0.7, 0.7, 0.7)
+            GuiText(gui, screen_width - (fromRight + valueDimensions),
+                    fromTop + (10 * idx), FormatDamage(damage))
+        end
 
         count = count + 1
     end
 
-    local icon = "mods/damage_stats/files/icons/total.png"
-    local x, y = screen_width - (widestString + fromRight),
-                 fromTop + (10 * (count + 1))
-    GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
-    GuiTooltip(gui, "Total Damage Taken", "")
-    iconId = iconId + 1
-
-    local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(totalDamage))
-    GuiColorSetForNextWidget(gui, 0.7, 0.7, 0.7, 0.7)
-    GuiText(gui, screen_width - (fromRight + valueDimensions),
-            fromTop + (10 * (count + 1)), FormatDamage(totalDamage))
+    if compact then
+        local icon = "mods/damage_stats/files/icons/total.png"
+        local x, y = screen_width - (compactFromRight + 10), compactFromTop 
+        GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
+        GuiTooltip(gui, "Total Damage Taken", FormatDamage(totalDamage))
+        iconId = iconId + 1
+    else
+        local icon = "mods/damage_stats/files/icons/total.png"
+        local x, y = screen_width - (widestString + fromRight),
+                     fromTop + (10 * (count + 1))
+        GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
+        GuiTooltip(gui, "Total Damage Taken", "")
+        iconId = iconId + 1
+            
+        local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(totalDamage))
+        GuiColorSetForNextWidget(gui, 0.7, 0.7, 0.7, 0.7)
+        GuiText(gui, screen_width - (fromRight + valueDimensions),
+                fromTop + (10 * (count + 1)), FormatDamage(totalDamage))
+    end
 end
