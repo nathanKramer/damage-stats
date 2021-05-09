@@ -6,10 +6,10 @@ damageGroupings = {
     ["$animal_failed_alchemist_b"] = "projectile",
     ["mat: toxic gold"] = "radioactive",
     ["mat: toxic rock"] = "radioactive",
+    ["mat: toxic ice"] = "radioactive", 
     ["mat: poison"] = "poison",
     ["mat: freezing vapour"] = "ice",
     ["mat: freezing liquid"] = "ice",
-    ["mat: toxic ice"] = "ice", 
     ["mat: frozen acid"] = "acid",
 }
 
