@@ -62,13 +62,13 @@ mod_settings = {
     {
         category_id = "positioning",
         ui_name = "Position Settings",
-        ui_description = "These settings allow you to move the report",
+        ui_description = "These settings allow you to move the report.",
         settings = {
             {
                 id = "positionFromTop",
                 ui_name = "Position from top",
-                ui_description = "The display position from the top of the screen. (Default: 180)",
-                value_default = "180",
+                ui_description = "The display position from the top of the screen. (Default: 200)",
+                value_default = "200",
                 scope = MOD_SETTING_SCOPE_RUNTIME,
             },
             {

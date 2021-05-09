@@ -6,7 +6,9 @@ damageGroupings = {
     ["mat: toxic rock"] = "radioactive",
     ["mat: poison"] = "poison",
     ["mat: freezing vapour"] = "ice",
-    ["mat: freezing liquid"] = "ice"
+    ["mat: freezing liquid"] = "ice",
+    ["mat: toxic ice"] = "ice", 
+    ["mat: frozen acid"] = "acid",
 }
 
 local function parseDamageType(rawDamageType)
