@@ -54,12 +54,11 @@ function OnPlayerSpawned(player)
 end
 
 damageGroupings = {
-    ["$damage_radioactive"] = "toxic",
     ["mat: cursed rock"] = "curse",
     ["$damage_rock_curse"] = "curse",
     ["$damage_holy_mountains_curse"] = "curse",
-    ["$ethereal_damage"] = "ethereal",
-    ["mat: toxic rock"] = "toxic",
+    ["$ethereal_damage"] = "curse",
+    ["mat: toxic rock"] = "radioactive",
     ["mat: poison"] = "poison",
     ["mat: freezing vapour"] = "ice",
     ["mat: freezing liquid"] = "ice"
@@ -107,9 +106,9 @@ function OnWorldPostUpdate()
                 grouping = damageGroupings[rawDamageType] or parsedDamageType
             end
 
-            local labelDimensions = GuiGetTextDimensions(gui, grouping .. ":")
+            -- local labelDimensions = GuiGetTextDimensions(gui, grouping .. ":")
             local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
-            local valueWidth = labelDimensions + valueDimensions + (padding / 2)
+            local valueWidth = valueDimensions + (padding / 2)
             if valueWidth > w then
                 w = valueWidth
             end
@@ -130,6 +129,8 @@ function OnWorldPostUpdate()
         table.sort(damageKeys, compareDamage)
 
         local count = 0
+
+        local iconId = 1
         for idx, damageKey in pairs(damageKeys) do
             if idx > displayLimit then
                 break
@@ -138,10 +139,19 @@ function OnWorldPostUpdate()
             local damage = damageTypesWithDamage[damageKey]
             local valueDimensions = GuiGetTextDimensions(gui, FormatDamage(damage))
 
-            GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
+            -- GuiColorSetForNextWidget( gui, 0.4, 0.4, 0.4, 0.7 )
+            -- local keyStr = damageKey .. ":"
+            -- GuiText(gui, screen_width - (w + padding), h + (10 * idx), keyStr)
 
-            local keyStr = damageKey .. ":"
-            GuiText(gui, screen_width - (w + padding), h + (10 * idx), keyStr)
+
+            local icon = "mods/damage_stats/files/icons/" .. damageKey .. ".png"
+            local dim = GuiGetImageDimensions(gui, icon, 1)
+            if dim == 0 then icon = "mods/damage_stats/files/icons/unknown.png" end
+
+            local x, y = screen_width - (w + padding), h + (10 * idx)
+            GuiImage( gui, iconId, x, y, icon, 1, 1, 1)
+            GuiTooltip( gui, damageKey, "" )
+            iconId = iconId + 1
             GuiColorSetForNextWidget( gui, 0.7, 0.7, 0.7, 0.7 )
             GuiText(gui, screen_width - (padding + valueDimensions), h + (10 * idx), FormatDamage(damage))
 
