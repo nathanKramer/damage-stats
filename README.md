@@ -2,7 +2,15 @@
 
 Noita mod for displaying an in-game damage report.
 
-![image](https://user-images.githubusercontent.com/4732403/117153633-833c5600-adfe-11eb-81e1-004d2f8abf8c.png)
+![image](https://user-images.githubusercontent.com/4732403/117560736-b1a68380-b0d3-11eb-861a-871c931c9bf5.png)
+
+## Compact Mode
+
+![image](https://user-images.githubusercontent.com/4732403/117560742-bbc88200-b0d3-11eb-8613-66644e1879a4.png)
+
+## Perfect Run indicator
+
+![image](https://user-images.githubusercontent.com/4732403/117560744-c1be6300-b0d3-11eb-997d-e3b37b0a2959.png)
 
 ## Installation
 
