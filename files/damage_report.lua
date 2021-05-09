@@ -3,6 +3,8 @@ damageGroupings = {
     ["$damage_rock_curse"] = "curse",
     ["$damage_holy_mountains_curse"] = "curse",
     ["$ethereal_damage"] = "curse",
+    ["$animal_failed_alchemist_b"] = "projectile",
+    ["mat: toxic gold"] = "radioactive",
     ["mat: toxic rock"] = "radioactive",
     ["mat: poison"] = "poison",
     ["mat: freezing vapour"] = "ice",
@@ -44,6 +46,7 @@ function DamageReport()
     for idx, component in pairs(damageStats) do
         local rawDamageType = ComponentGetValue2(component, "name")
         local damage = ComponentGetValue2(component, "value_float")
+        print(rawDamageType)
 
         local parsedDamageType = parseDamageType(rawDamageType)
         local grouping = damageGroupings[rawDamageType] or parsedDamageType
