@@ -11,7 +11,7 @@ function DisplayReport(damageReport)
     if not damageReport.player then return end
 
     local screen_width, screen_height = GuiGetScreenDimensions(gui)
-    local padding = 15
+    local padding = 10
     local displayLimit = tonumber(
         ModSettingGet("damage_stats.display_limit") or 20
     )
@@ -62,6 +62,8 @@ function DisplayReport(damageReport)
         local valueWidth = valueDimensions + padding
         if valueWidth > widestString then widestString = valueWidth end
     end
+    local totalWidth = GuiGetTextDimensions(gui, FormatDamage(totalDamage))
+    if totalWidth > widestString then widestString = totalWidth end
 
     local count = 0
     local iconId = 1
@@ -83,7 +85,7 @@ function DisplayReport(damageReport)
             GuiTooltip(gui, InitialCase(damageKey), FormatDamage(damage))
             iconId = iconId + 1
         else
-            local x, y = screen_width - (widestString + fromRight),
+            local x, y = screen_width - (widestString + fromRight + padding),
                      fromTop + (10 * idx)
 
             GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
@@ -105,7 +107,7 @@ function DisplayReport(damageReport)
         iconId = iconId + 1
     else
         local icon = "mods/damage_stats/files/icons/total.png"
-        local x, y = screen_width - (widestString + fromRight),
+        local x, y = screen_width - (widestString + fromRight + padding),
                      fromTop + (10 * (count + 1))
         GuiImage(gui, iconId, x, y, icon, 0.8, 1, 1)
         GuiTooltip(gui, "Total Damage Taken", "")
