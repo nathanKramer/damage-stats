@@ -6,7 +6,7 @@ Noita mod for displaying an in-game damage report.
 
 ## Compact Mode
 
-![image](https://user-images.githubusercontent.com/4732403/117560742-bbc88200-b0d3-11eb-8613-66644e1879a4.png)
+![image](https://user-images.githubusercontent.com/4732403/117564805-3e136f00-b0f1-11eb-930b-dfd94a0a7420.png)
 
 ## Perfect Run indicator
 
@@ -17,7 +17,3 @@ Noita mod for displaying an in-game damage report.
 Put this folder in your Noita mods folder, something like:
 
 `C:\Program Files (x86)\Steam\steamapps\common\Noita\mods`
-
-## Known issues
-
-This is a basic proof of concept, currently fire damage is not reliable, and there are likely other issues.
