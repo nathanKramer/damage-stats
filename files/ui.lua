@@ -36,14 +36,15 @@ function DisplayReport(damageReport)
             GuiImage( gui, iconId, x, y, icon, 0.7, 1, 1)
             GuiTooltip(gui, "Perfect Run", "")
         else
-            local valueDimensions = GuiGetTextDimensions(gui, "Perfect Run")
+            local valueDimensions = GuiGetTextDimensions(gui, "Damage Report")
             GuiColorSetForNextWidget(gui, 0.5, 0.5, 0.5, 0.5)
             local x, y = screen_width - (fromRight + valueDimensions), fromTop
-            GuiText(gui, x, y, "Perfect Run")
+            GuiText(gui, x, y, "Damage Report")
 
             local icon = "mods/damage_stats/files/icons/perfect.png"
             local x, y = screen_width - (10 + fromRight), fromTop + 10
             GuiImage( gui, iconId, x, y, icon, 0.7, 1, 1)
+            GuiTooltip(gui, "Perfect Run", "")
         end
 
         return
