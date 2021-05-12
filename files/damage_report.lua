@@ -4,6 +4,7 @@ damageGroupings = {
     ["$damage_holy_mountains_curse"] = "curse",
     ["$ethereal_damage"] = "curse",
     ["$animal_failed_alchemist_b"] = "projectile",
+    ["mat: toxic gas"] = "radioactive",
     ["mat: toxic gold"] = "radioactive",
     ["mat: toxic rock"] = "radioactive",
     ["mat: toxic ice"] = "radioactive", 

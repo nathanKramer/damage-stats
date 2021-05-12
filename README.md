@@ -17,3 +17,6 @@ Noita mod for displaying an in-game damage report.
 Put this folder in your Noita mods folder, something like:
 
 `C:\Program Files (x86)\Steam\steamapps\common\Noita\mods`
+
+Make sure the folder is called `damage_stats`.
+It must be called `damage_stats` in order to work.
