@@ -29,7 +29,6 @@ function DisplayReport(damageReport)
     local totalDamage = damageReport.totalDamage
 
     if totalDamage == 0 then
-
         if compact then
             local icon = "mods/damage_stats/files/icons/perfect.png"
             local x, y = screen_width - (10 + compactFromRight), compactFromTop

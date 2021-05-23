@@ -15,10 +15,16 @@ damageGroupings = {
 }
 
 local function parseDamageType(rawDamageType)
-    return string.gsub(
+    local parsed = string.gsub(
         string.gsub(rawDamageType, "$damage_", ""),
         "mat: ", ""
     )
+
+    if string.sub(parsed, 1, 2) == "$" then
+        parsed = GameTextGet(parsed) or parsed 
+    end
+
+    return parsed
 end
 
 function DamageReport()
@@ -47,7 +53,6 @@ function DamageReport()
     for idx, component in pairs(damageStats) do
         local rawDamageType = ComponentGetValue2(component, "name")
         local damage = ComponentGetValue2(component, "value_float")
-        print(rawDamageType)
 
         local parsedDamageType = parseDamageType(rawDamageType)
         local grouping = damageGroupings[rawDamageType] or parsedDamageType
