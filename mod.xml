@@ -2,6 +2,7 @@
 	name="Damage Stats"
 	description="Record and display damage stats per damage type"
 	request_no_api_restrictions="0" 
+	tags="gameplay, quality of life"
 > 
 </Mod>
 
